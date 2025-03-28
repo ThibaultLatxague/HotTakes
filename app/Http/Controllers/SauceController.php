@@ -11,7 +11,7 @@ class SauceController extends Controller
     // Affiche toutes les sauces
     public function index()
     {
-        //$sauces = Sauce::all();
+        // On fait des pages de 10 sauces
         $sauces= Sauce::paginate(10);
         return view('sauces.index', compact('sauces'));
     }
@@ -19,6 +19,7 @@ class SauceController extends Controller
     // Affiche le formulaire de création d'une sauce
     public function create()
     {
+        // On affiche le formulaire de création d'une sauce
         return view('sauces.create');
     }
 
@@ -27,7 +28,7 @@ class SauceController extends Controller
     {
         $userId = Auth::id();
 
-        // Regex
+        // On verifie l'intégrité des données
         $request->validate([
             'name' => 'required|string|max:255',
             'manufacturer' => 'required|string|max:255',
@@ -37,7 +38,7 @@ class SauceController extends Controller
             'heat' => 'required|integer|min:1|max:10'
         ]);
         
-        // Image
+        // On récupère l'image
         $image = $request->file('imageUrl');
         if ($image) {
             $imageName = $request->name . '.png';
@@ -45,7 +46,9 @@ class SauceController extends Controller
         }
         
         $data = $request->all();
+        // On ajoute l'ID de l'utilisateur à la sauce
         $data = array_merge($data, ['userId' => $userId]);
+        // On crée la sauce
         Sauce::create($data);
 
         return redirect()->route('sauces.index')->with('success', 'Sauce créée avec succès.');
@@ -69,7 +72,7 @@ class SauceController extends Controller
     {
         $userId = Auth::id();
 
-        // Regex
+        // On verifie l'intégrité des données
         $request->validate([
             'name' => 'required|string|max:255',
             'manufacturer' => 'required|string|max:255',
@@ -79,7 +82,7 @@ class SauceController extends Controller
             'heat' => 'required|integer|min:1|max:10'
         ]);
         
-        // Image
+        // On récupère l'image
         $image = $request->file('imageUrl');
         if ($image) {
             $imageName = $request->name . '.png';
@@ -101,6 +104,7 @@ class SauceController extends Controller
         $sauce = Sauce::find($id);
         $sauce->delete();
 
+        // On supprime l'image de la sauce avec message de succes
         return redirect()->route('sauces.index')->with('success','Sauce supprimée avec succès');
     }
 
@@ -120,6 +124,7 @@ class SauceController extends Controller
             $sauce->usersLiked = json_encode($usersLiked);
             $sauce->increment('likes');
 
+            // Si l'utilisateur est dans la liste 'usersDisliked', on le retire
             if (in_array(Auth::id(), $usersDisliked)) {
                 $usersDisliked = array_diff($usersDisliked, [Auth::id()]);
                 $sauce->usersDisliked = json_encode($usersDisliked);

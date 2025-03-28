@@ -24,8 +24,10 @@ class SauceApiController extends Controller
             'description' => 'nullable|string',
         ]);
 
+        // Création et renvoie sauce par le modèle
         $sauce = Sauce::create($validated);
 
+        // Envoie de la réponse par l'API
         return response()->json($sauce, Response::HTTP_CREATED);
     }
 
@@ -50,6 +52,7 @@ class SauceApiController extends Controller
             return response()->json(['message' => 'Sauce non trouvée'], Response::HTTP_NOT_FOUND);
         }
 
+        // Validation des données
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'heat' => 'sometimes|required|integer|min:0|max:10',
@@ -58,6 +61,7 @@ class SauceApiController extends Controller
 
         $sauce->update($validated);
 
+        // Envoie de la réponse par l'API
         return response()->json($sauce, Response::HTTP_OK);
     }
 
@@ -70,8 +74,10 @@ class SauceApiController extends Controller
             return response()->json(['message' => 'Sauce non trouvée'], Response::HTTP_NOT_FOUND);
         }
 
+        // Suppression de la sauce
         $sauce->delete();
 
+        // Envoie de la réponse par l'API
         return response()->json(['message' => 'Sauce supprimée'], Response::HTTP_OK);
     }
 }
